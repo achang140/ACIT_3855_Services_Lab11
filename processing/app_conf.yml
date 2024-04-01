@@ -4,7 +4,8 @@ datastore:
 scheduler:
   period_sec: 5
 eventstore:
-  url: http://localhost:8090
+  # url: http://localhost:8090
+  url: http://acit3855-lab6-kafka.westus3.cloudapp.azure.com/storage
 events:
   hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
   port: 9092
