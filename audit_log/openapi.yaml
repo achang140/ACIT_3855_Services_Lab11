@@ -1,0 +1,184 @@
+openapi: 3.0.0
+info:
+  description: This API receives room booking and activity reservation events from resort hotels located in various countries
+  version: "1.0.0"
+  title: Resort Hotels API
+  contact:
+    email: achang140@my.bcit.ca
+tags:
+  - name: resort_hotels
+    description: Hotel rooms and activities available in resort hotels located in different countries 
+paths:
+  /booking/hotel-rooms:
+    get:
+      tags: 
+        - resort_hotels
+      summary: gets hotel room reservations
+      operationId: app.get_hotel_room
+      description: Gets hotel room reservations added after a timestamp
+      parameters:
+        - name: index
+          in: query
+          description: Gets the Hotel Room reservations at the index in the event store
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: Successfully returned a list of hotel activity reservations
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/HotelRoomBooking'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /booking/hotel-activities:
+    get:
+      tags: 
+        - resort_hotels
+      summary: gets hotel activity reservations
+      operationId: app.get_hotel_activity
+      description: Gets hotel activity reservations added after a timestamp
+      parameters:
+        - name: index
+          in: query
+          description: Gets the Hotel Activity reservations at the index in the event store
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: Successfully returned a list of hotel activity reservations
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/HotelActivityBooking'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    HotelRoomBooking:
+      required:
+      - hotel_id
+      - customer_id
+      - room_id
+      - room_type
+      - num_of_people
+      - check_in_date
+      - check_out_date
+      - timestamp
+      - trace_id
+      properties:
+        hotel_id:
+          type: string
+          example: CA-01
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        room_id:
+          type: string
+          example: A101
+        room_type:
+          type: string
+          example: Single Bed
+        num_of_people:
+          type: integer
+          minimum: 1
+          maximum: 4
+          example: 1
+        check_in_date:
+          type: string
+          format: date
+          example: '2023-08-08'
+        check_out_date:
+          type: string
+          format: date
+          example: '2023-08-13'
+        timestamp:
+          type: string
+          format: date-time
+          example: '2023-07-29T09:12:33.001Z'
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0852
+      type: object
+    HotelActivityBooking:
+      required:
+      - hotel_id
+      - customer_id
+      - activity_id
+      - activity_name
+      - num_of_people
+      - reservation_date
+      - timestamp
+      - trace_id
+      properties:
+        hotel_id:
+          type: string
+          example: CA-02
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        activity_id:
+          type: string
+          example: C1
+        activity_name:
+          type: string
+          example: Rock Climbing
+        num_of_people:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 3
+        reservation_date:
+          type: string
+          format: date
+          example: '2023-08-09'
+        timestamp:
+          type: string
+          format: date-time
+          example: '2023-08-08T09:12:33.001Z'
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0853
+      type: object

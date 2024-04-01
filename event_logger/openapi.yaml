@@ -1,0 +1,57 @@
+openapi: 3.0.0
+info:
+  description: This API receives room booking and activity reservation events from resort hotels located in various countries 
+  version: "1.0.0"
+  title: Resort Hotels API 
+  contact:
+    email: achang140@my.bcit.ca
+tags:
+  - name: resort_hotels
+    description: Hotel rooms and activities available in resort hotels located in different countries 
+paths:
+  /event_stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_event_stats
+      description: Gets the number of events for each service code (receiver, storage, and processing)
+      responses:
+        '200':
+          description: Successfully returned a dictionary of service statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                $ref: '#/components/schemas/ReservationEventStats'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    ReservationEventStats:
+      required:
+      - "0001"
+      - "0002"
+      - "0003"
+      - "0004"
+      properties:
+        "0001":
+          type: integer
+          example: 10
+        "0002":
+          type: integer
+          example: 22
+        "0003":
+          type: integer
+          example: 12
+        "0004":
+          type: integer
+          example: 98
+      type: object

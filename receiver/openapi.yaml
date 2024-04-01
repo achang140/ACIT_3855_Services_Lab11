@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  description: This API receives room booking and activity reservation events from resort hotels located in various countries 
+  version: "1.0.0"
+  title: Resort Hotels API 
+  contact:
+    email: achang140@my.bcit.ca
+tags:
+  - name: resort_hotels
+    description: Hotel rooms and activities available in resort hotels located in different countries 
+paths:
+  /booking/hotel-rooms:
+    post:
+      tags:
+        - resort_hotels
+      summary: books a hotel room 
+      operationId: app.book_hotel_room
+      description: Adds a new hotel room booking to the system
+      responses:
+        '201':
+          description: booking created 
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HotelRoomBooking'
+        description: Booking of hotel room to add
+
+  /booking/hotel-activities:
+    post: 
+      tags:
+        - resort_hotels 
+      summary: reserves hotel activity
+      operationId: app.book_hotel_activity
+      description: Adds a hotel activity reservation to the system
+      responses:
+        '201':
+          description: booking created 
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HotelActivityBooking'
+        description: Reservation of hotel activity to add
+
+components:
+  schemas:
+    HotelRoomBooking:
+      required:
+      - hotel_id
+      - customer_id
+      - room_id 
+      - room_type 
+      - num_of_people
+      - check_in_date
+      - check_out_date 
+      - timestamp 
+      properties:
+        hotel_id:
+          type: string
+          example: CA-01
+        customer_id:
+          type: string 
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        room_id:
+          type: string
+          example: A101
+        room_type:
+          type: string
+          example: Single Bed
+        num_of_people:
+          type: integer 
+          minimum: 1
+          maximum: 4
+          example: 1
+        check_in_date:
+          type: string
+          format: date
+          example: '2023-08-08'
+        check_out_date:
+          type: string 
+          format: date
+          example: '2023-08-13'
+        timestamp:
+          type: string
+          format: date-time
+          example: '2023-07-29T09:12:33.001Z'
+      type: object
+    
+    HotelActivityBooking:
+      required:
+      - hotel_id
+      - customer_id
+      - activity_id
+      - activity_name 
+      - num_of_people
+      - reservation_date
+      - timestamp 
+      properties:
+        hotel_id:
+          type: string
+          example: CA-02
+        customer_id:
+          type: string 
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        activity_id:
+          type: string
+          example: C1
+        activity_name:
+          type: string
+          example: Rock Climbing 
+        num_of_people:
+          type: integer 
+          minimum: 1
+          maximum: 5
+          example: 3
+        reservation_date:
+          type: string 
+          format: date 
+          example: '2023-08-09'
+        timestamp:
+          type: string
+          format: date-time
+          example: '2023-08-08T09:12:33.001Z'
+      type: object

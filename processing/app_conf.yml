@@ -1,0 +1,14 @@
+version: 1
+datastore:
+  filename: /data/stats.sqlite
+scheduler:
+  period_sec: 5
+eventstore:
+  url: http://localhost:8090
+events:
+  hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+  port: 9092
+  topic: event_log
+  max_retries: 5
+  sleep_time: 5
+  event_threshold: 25

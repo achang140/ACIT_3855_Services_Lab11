@@ -1,0 +1,128 @@
+version: '3.3'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181"
+    hostname: zookeeper
+    volumes:
+      - /home/azureuser/zookeeper/data:/opt/zookeeper-3.4.13/data
+
+  kafka:
+    image: wurstmeister/kafka
+    command: [start-kafka.sh]
+    ports:
+      - "9092:9092"
+    hostname: kafka
+    environment:
+      KAFKA_CREATE_TOPICS: "events:1:1,event_log:1:1" # topic:partition:replicas
+      KAFKA_ADVERTISED_HOST_NAME: "acit3855-lab6-kafka.westus3.cloudapp.azure.com" # docker-machine ip
+      KAFKA_LISTENERS: INSIDE://:29092,OUTSIDE://:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://acit3855-lab6-kafka.westus3.cloudapp.azure.com:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/kafka-logs
+      KAFKA_BROKER_ID: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/azureuser/kafka:/kafka/kafka-logs
+    depends_on:
+      - "zookeeper"
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'events' # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'user' # You can use whatever password you like
+      MYSQL_PASSWORD: 'password' # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+    volumes:
+      # Where our data will be persisted
+      - my-db:/var/lib/mysql # Names our volume
+
+  receiver: 
+    image: receiver
+    ports:
+      - "8080:8080"
+    environment: 
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/receiver:/config
+      - /home/azureuser/logs:/logs
+    depends_on:
+      - "kafka"
+
+  storage:
+    image: storage
+    ports: 
+      - "8090:8090"
+    environment: 
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/storage:/config
+      - /home/azureuser/logs:/logs
+    depends_on:
+      - "kafka"
+      - "db"
+  
+  processing:
+    image: processing 
+    ports:
+      - "8100:8100"
+    network_mode: "host"
+    environment: 
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/processing:/config
+      - /home/azureuser/logs:/logs
+      - processing-db:/data
+    depends_on: 
+      - "storage"
+      - "kafka"
+
+  audit_log:
+    image: audit_log
+    ports: 
+      - "8110:8110"
+    environment: 
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/audit_log:/config
+      - /home/azureuser/logs:/logs
+    depends_on:
+      - "kafka"
+
+  dashboard:
+    image: dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "processing"
+      - "audit_log"
+
+  event_log:
+    image: event_log
+    ports: 
+      - "8120:8120"
+    environment: 
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/event_log:/config
+      - /home/azureuser/logs:/logs
+      - event-db:/data
+    depends_on:
+      - "kafka"
+
+volumes:
+  my-db:
+  processing-db:
+  event-db:

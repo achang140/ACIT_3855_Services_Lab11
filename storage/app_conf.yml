@@ -1,0 +1,22 @@
+version: 1 
+datastore: 
+  user: user
+  password: password
+  hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+  port: 3306
+  db: events
+events:
+  hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+  port: 9092
+  topics:
+    - events
+    - event_log
+  max_retries: 5
+  sleep_time: 5
+
+# events:
+#   hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+#   port: 9092
+#   topic: events
+#   max_retries: 5
+#   sleep_time: 10

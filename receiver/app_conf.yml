@@ -1,0 +1,20 @@
+version: 1 
+eventstore1: 
+  url: http://localhost:8090/booking/hotel-rooms
+eventstore2: 
+  url: http://localhost:8090/booking/hotel-activities
+events:
+  hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+  port: 9092
+  topics:
+    - events
+    - event_log
+  max_retries: 5
+  sleep_time: 5
+
+# events:
+#   hostname: acit3855-lab6-kafka.westus3.cloudapp.azure.com
+#   port: 9092
+#   topic: events
+#   max_retries: 5
+#   sleep_time: 10
