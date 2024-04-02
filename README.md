@@ -1,4 +1,4 @@
-```shell
+```
 docker-compose up -d --scale receiver=3
 docker-compose logs -f
 ```
